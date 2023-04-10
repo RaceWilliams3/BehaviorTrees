@@ -28,8 +28,9 @@ public class BehaviorTree : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.G))
         {
+
             myCurrentTask = BuildTask_GetCheese();
-            myCurrentTask.run();
+            Debug.Log(myCurrentTask.run());
         }
     }
 
@@ -38,50 +39,44 @@ public class BehaviorTree : MonoBehaviour
 
 
         //Creating task list for opening an unlocked door
-        //newTasks = new List<Task>();
-        newTasks.Add(new IsTrue_Check(door.GetComponent<Door>().open));
+        newTasks = new List<Task>();
+        newTasks.Add(new IsFalse_Check(door.GetComponent<Door>().locked));
         newTasks.Add(new OpenDoor_Do(door.GetComponent<Door>()));
 
         openUnlockedDoor = new Sequence(newTasks);
 
 
         //Creating task list for barging a locked door
-        //List<Task> newTasks = new List<Task>();
-        newTasks.Clear();
+        newTasks = new List<Task>();
         newTasks.Add(new IsTrue_Check(door.GetComponent<Door>().locked));
         newTasks.Add(new BargeDoor_Do(door.GetComponent<Rigidbody>()));
 
         bargeLockedDoor = new Sequence(newTasks);
 
-
-        //Adding the sequences to the open closed door selector
-        //newTasks = new List<Task>();
-        newTasks.Clear();
+        //Adding bottom sequences to the closed door selector
+        newTasks = new List<Task>();
         newTasks.Add(openUnlockedDoor);
         newTasks.Add(bargeLockedDoor);
 
         openClosedDoor = new Selector(newTasks);
 
-        //Creating and adding the tasks and selector for the go through closed door sequence
-        //newTasks = new List<Task>();
-        newTasks.Clear();
-        newTasks.Add(new MoveArriver_Do(movementSys, door));
-        newTasks.Add(openClosedDoor);
-        newTasks.Add(new MoveArriver_Do(movementSys, cheese));
-
-        goThroughClosedDoor = new Sequence(newTasks);
-
-        //Creating and adding the tasks to the sequence for going through an open door
-        //newTasks = new List<Task>();
-        newTasks.Clear();
+        //Creating and adding tasks to moving though already open door sequence
+        newTasks = new List<Task>();
         newTasks.Add(new IsTrue_Check(door.GetComponent<Door>().open));
         newTasks.Add(new MoveArriver_Do(movementSys, cheese));
 
         goThroughOpenDoor = new Sequence(newTasks);
 
-        //Adding the the open and closed door sequences to the base selector
-        //newTasks = new List<Task>();
-        newTasks.Clear();
+        //Getting through a closed door
+        newTasks = new List<Task>();
+        newTasks.Add(new MoveArriver_Do(movementSys, door));
+        newTasks.Add(openClosedDoor);
+        newTasks.Add(new MoveArriver_Do(movementSys, cheese)); ;
+
+        goThroughClosedDoor = new Sequence(newTasks);
+
+        //adding the top two sequences to the root selector
+        newTasks = new List<Task>();
         newTasks.Add(goThroughOpenDoor);
         newTasks.Add(goThroughClosedDoor);
 

@@ -67,7 +67,7 @@ public class MoveArriver_Do : Task
     public override bool run()
     {
         mover.myTarget = target;
-        mover.move = true;
+        mover.beginMovement();
 
         return true;
     }
@@ -83,7 +83,7 @@ public class BargeDoor_Do : Task
     }
     public override bool run()
     {
-        doorRig.AddForce(-10f, 0, 0, ForceMode.VelocityChange);
+        doorRig.AddForce(-50f, 0, 10f, ForceMode.VelocityChange);
         return true;
     }
 
@@ -92,59 +92,52 @@ public class BargeDoor_Do : Task
 public class Sequence : Task
 {
     List<Task> children;
-    Task currentTask;
-    int currentTaskIndex = 0;
+    bool returnVal = true;
 
     public Sequence(List<Task> taskList)
     {
         children = taskList;
+        Debug.Log("Sequence created");
     }
 
     public override bool run()
     {
-        currentTask = children[currentTaskIndex];
-        if (currentTask.run() == true)
+
+        foreach (Task t in children)
         {
-            currentTaskIndex++;
-            if (currentTaskIndex < children.Count)
+            Debug.Log("Task running in sequence");
+            if (t.run() == false)
             {
-                //There are more tasks to run so run again
-                this.run();
-            } 
-            else
-            {
-                //All tasks have run successfully
-                return true;
+                returnVal = false;
+                break;
             }
         }
-        //The last task returned false so the sequence defaults to false
-        return false;
+        return returnVal;
     }
 }
 
 public class Selector : Task
 {
     List<Task> children;
-    Task currentTask;
+    bool returnVal = false;
 
     public Selector(List<Task> taskList)
     {
         children = taskList;
+        Debug.Log("Selector Created");
     }
 
     public override bool run()
     {
-        foreach (Task task in children)
+        foreach (Task t in children)
         {
-            if (task.run() == true)
+            Debug.Log("Task running in selector");
+            if (t.run() == true)
             {
-                //The task we tried worked so we can return
-                return true;
+                returnVal = true;
+                break;
             }
-            //If it was false, foreach will move on and try the next one
         }
-
-        //If not any of them work then we leave the forach so we default to false
-        return false;
+        return returnVal;
     }
 }

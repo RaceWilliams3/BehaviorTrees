@@ -10,11 +10,18 @@ public class Arriver : Kinematic
     public float arrivalThreshold = 1f;
 
     // Start is called before the first frame update
+
     void Start()
     {
         myMoveType = new Arrive();
         myMoveType.character = this;
+    }
+    
+    public void beginMovement()
+    {
         myMoveType.target = myTarget;
+
+        move = true;
     }
 
     // Update is called once per frame
