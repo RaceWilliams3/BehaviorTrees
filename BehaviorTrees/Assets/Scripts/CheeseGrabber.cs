@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BehaviorTree : MonoBehaviour
+public class CheeseGrabber : MonoBehaviour
 {
     public GameObject cheese;
     public GameObject door;
