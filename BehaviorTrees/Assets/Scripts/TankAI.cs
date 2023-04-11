@@ -9,6 +9,8 @@ public class TankAI : MonoBehaviour
 
     public GameObject player;
 
+    public GameObject bullet;
+
     public int ammo = 2;
     public float range = 5f;
 
@@ -27,7 +29,13 @@ public class TankAI : MonoBehaviour
     public void shoot()
     {
         ammo--;
-        Debug.Log("shot");
+        FiringSolution fs = new FiringSolution();
+        Vector3? aimVector = fs.Calculate(transform.position, player.transform.position, range * 2, Physics.gravity);
+        if (aimVector.HasValue)
+        {
+            GameObject newBullet = Instantiate(bullet, transform.position + new Vector3(0, 1, 0), transform.rotation);
+            newBullet.GetComponent<Rigidbody>().AddForce(aimVector.Value.normalized * range * 2, ForceMode.VelocityChange);
+        }
     }
 
     void OnCollisionEnter(Collision collision)
